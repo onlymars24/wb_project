@@ -19,4 +19,5 @@ class ExcisesReport extends Model
         'excise',
         'date'
     ];
+    protected $connection = 'mysql2';
 }

@@ -29,4 +29,5 @@ class Order extends Model
         'gNumber',
         'sticker'
     ];
+    protected $connection = 'mysql2';
 }

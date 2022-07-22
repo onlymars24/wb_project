@@ -23,4 +23,5 @@ class Income extends Model
         'nmId',
         'status'
     ];
+    protected $connection = 'mysql2';
 }

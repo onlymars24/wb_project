@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services;
 
-use Illuminate\Http\Request;
 use App\Models\Income;
 use App\Models\Stock;
 use App\Models\Order;
@@ -10,27 +9,32 @@ use App\Models\Sale;
 use App\Models\SalesReport;
 use App\Models\ExcisesReport;
 
-
-class CreateController extends Controller
-{   
+class AutoUpdateService
+{
     private $key = 'MDljY2M1MDgtMmMzNS00ZTY5LTljODMtMWI0NGVkOWRmYTM5';
+    private $dateFrom;
 
-    public function get_data_by_api($url) {
+    public function __construct(){
+        $time = 'T00:00';
+        $date = date('Y-m-d');
+        $date = date_create($date);
+        date_modify($date, '-1 day');
+        $date = date_format($date, 'Y-m-d');
+        $this->dateFrom = $date.$time;
+    }
+    private function get_data_by_api($url) {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL, $url);
         $data = curl_exec($ch);
         curl_close($ch);
-    
+
         return $data;
     }
 
-    public function createIncomes(Request $request){
-        if(!empty(Income::all())){
-            Income::truncate();
-        }
-        $dateFrom = $request->dateFrom;
+    private function addNewIncomes(){
+        $dateFrom = $this->dateFrom.':00.000Z';
         $url = "https://suppliers-stats.wildberries.ru/api/v1/supplier/incomes?dateFrom=$dateFrom&key={$this->key}";
         $data = $this->get_data_by_api($url);
         $data = json_decode($data);
@@ -51,15 +55,10 @@ class CreateController extends Controller
                 'status' => $income->status
             ]);
         }
-        $request->session()->flash('flash', 'Данные успешно загружены!');
-        return redirect('/');
     }
 
-    public function createStocks(Request $request){
-        if(!empty(Stock::all())){
-            Stock::truncate();
-        }
-        $dateFrom = $request->dateFrom;
+    private function addNewStocks(){
+        $dateFrom = $this->dateFrom.':00.000Z';  
         $url = "https://suppliers-stats.wildberries.ru/api/v1/supplier/stocks?dateFrom=$dateFrom&key={$this->key}";
         $data = $this->get_data_by_api($url);
         $data = json_decode($data);
@@ -88,65 +87,46 @@ class CreateController extends Controller
                 'Discount' => $stock->Discount
             ]);
         }
-        $request->session()->flash('flash', 'Данные успешно загружены!');
-        return redirect('/');
     }
 
-    public function createOrders(Request $request){
-            if(!empty(Order::all())){
-                Order::truncate();
-            }
-            $dateFrom = $request->dateFrom;
-            $flag = $request->flag;
-            $url = "https://suppliers-stats.wildberries.ru/api/v1/supplier/orders?dateFrom=$dateFrom&flag=$flag&key={$this->key}";
-            $data = $this->get_data_by_api($url);
-            $data = json_decode($data);
-            if(empty($data)){
-                while(empty($data)){
-                    $data = $this->get_data_by_api($url);
-                    $data = json_decode($data);
-                }
-            }
-            foreach ($data as $order){
-                Order::create([
-                    'date' => $order->date,
-                    'lastChangeDate' => $order->lastChangeDate,
-                    'supplierArticle' => $order->supplierArticle,
-                    'techSize' => $order->techSize,
-                    'barcode' => $order->barcode,
-                    'totalPrice' => $order->totalPrice,
-                    'discountPercent' => $order->discountPercent,
-                    'warehouseName' => $order->warehouseName,
-                    'oblast' => $order->oblast,
-                    'incomeID' => $order->incomeID,
-                    'odid' => $order->odid,
-                    'nmId' => $order->nmId,
-                    'subject' => $order->subject,
-                    'category' => $order->category,
-                    'brand' => $order->brand,
-                    'isCancel' => $order->isCancel,
-                    'cancel_dt' => $order->cancel_dt,
-                    'gNumber' => $order->gNumber,
-                    'sticker' => $order->sticker
-                ]);
-            }            
-        $request->session()->flash('flash', 'Данные успешно загружены!');
-        return redirect('/');
+    private function addNewOrders(){
+        $dateFrom = $this->dateFrom.':00.000Z';
+        $flag = 1;
+        $url = "https://suppliers-stats.wildberries.ru/api/v1/supplier/orders?dateFrom=$dateFrom&flag=$flag&key={$this->key}";
+        $data = $this->get_data_by_api($url);
+        $data = json_decode($data);
+        foreach ($data as $order){
+            Order::create([
+                'date' => $order->date,
+                'lastChangeDate' => $order->lastChangeDate,
+                'supplierArticle' => $order->supplierArticle,
+                'techSize' => $order->techSize,
+                'barcode' => $order->barcode,
+                'totalPrice' => $order->totalPrice,
+                'discountPercent' => $order->discountPercent,
+                'warehouseName' => $order->warehouseName,
+                'oblast' => $order->oblast,
+                'incomeID' => $order->incomeID,
+                'odid' => $order->odid,
+                'nmId' => $order->nmId,
+                'subject' => $order->subject,
+                'category' => $order->category,
+                'brand' => $order->brand,
+                'isCancel' => $order->isCancel,
+                'cancel_dt' => $order->cancel_dt,
+                'gNumber' => $order->gNumber,
+                'sticker' => $order->sticker
+            ]);
+        }            
     }
 
-    public function createSales(Request $request){
-        if(!empty(Sale::all())){
-            Sale::truncate();
-        }
-        $dateFrom = $request->dateFrom;
-        $flag = $request->flag;
+    private function addNewSales(){
+        $dateFrom = $this->dateFrom.':00.000Z';
+        $flag = 1;
         $url = "https://suppliers-stats.wildberries.ru/api/v1/supplier/sales?dateFrom=$dateFrom&flag=$flag&key={$this->key}";
         $data = $this->get_data_by_api($url);
         $data = json_decode($data);
         foreach ($data as $sale){
-            if($sale->incomeID == null){
-                continue;
-            }
             Sale::create([
                 'date' => $sale->date,
                 'lastChangeDate' => $sale->lastChangeDate,
@@ -178,23 +158,17 @@ class CreateController extends Controller
                 'sticker' => $sale->sticker
             ]);
         }
-        $request->session()->flash('flash', 'Данные успешно загружены!');
-        return redirect('/');
     }
 
-    public function createSalesReports(Request $request){
-        if(!empty(SalesReport::all())){
-            SalesReport::truncate();
-        }
-        $dateFrom = $request->dateFrom;
-        $dateTo = $request->dateTo;
-        $limit = $request->limit;
-        $rrdid = $request->rrdid;
+    private function addNewSalesReports(){
+        $dateFrom = $this->dateFrom;
+        $dateTo = $this->dateFrom;
+        $limit = 1000;
+        $rrdid = 0;
         $url = "https://suppliers-stats.wildberries.ru/api/v1/supplier/reportDetailByPeriod?dateFrom=$dateFrom&key={$this->key}&limit=$limit&rrdid=$rrdid&dateto=$dateTo";
         $data = $this->get_data_by_api($url);
         $data = json_decode($data);
-        while(!empty($data)){
-            foreach ($data as $salesReport){
+        foreach ($data as $salesReport){
             SalesReport::create([
                 'realizationreport_id' => $salesReport->realizationreport_id,
                 'suppliercontract_code' => $salesReport->suppliercontract_code,
@@ -244,31 +218,12 @@ class CreateController extends Controller
                 'site_country' => $salesReport->site_country,
                 'penalty' => $salesReport->penalty,
                 'additional_payment' => $salesReport->additional_payment
-                ]);    
-            }
-            $rrdid = end($data)->rrd_id;
-            $url = "https://suppliers-stats.wildberries.ru/api/v1/supplier/reportDetailByPeriod?dateFrom=$dateFrom&key={$this->key}&limit=$limit&rrdid=$rrdid&dateto=$dateTo";
-            $data = $this->get_data_by_api($url);
-            $data = json_decode($data);
-            if(empty($data)){
-                $j = 10;
-                while(empty($data) && $j > 0){
-                    $data = $this->get_data_by_api($url);
-                    $data = json_decode($data);
-                    $j--;
-                }
-            }
+            ]);
         }
-        
-        $request->session()->flash('flash', 'Данные успешно загружены!');
-        return redirect('/');
     }
 
-    public function createExcisesReports(Request $request){
-        if(!empty(ExcisesReport::all())){
-            ExcisesReport::truncate();
-        }
-        $dateFrom = $request->dateFrom;
+    private function addNewExcisesReports(){
+        $dateFrom = $this->dateFrom;
         $url = "https://suppliers-stats.wildberries.ru/api/v1/supplier/excise-goods?dateFrom=$dateFrom&key={$this->key}";
         $data = $this->get_data_by_api($url);
         $data = json_decode($data);
@@ -285,8 +240,15 @@ class CreateController extends Controller
                 'date' => $excisesReport->date
             ]);
         }
-        $request->session()->flash('flash', 'Данные успешно загружены!');
-        return redirect('/');
+    }
+
+    public function addAllData(){
+        $this->addNewIncomes();
+        $this->addNewStocks();
+        $this->addNewOrders();
+        $this->addNewSales();
+        $this->addNewSalesReports();
+        $this->addNewExcisesReports();
     }
 
 }

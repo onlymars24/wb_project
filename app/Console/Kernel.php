@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Services\AutoUpdateService;
 
 class Kernel extends ConsoleKernel
 {
@@ -15,7 +16,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->call(function () {
+            $autoUpdateService = new AutoUpdateService();
+            $autoUpdateService->addAllData();
+        })->dailyAt('00:10');;
     }
 
     /**

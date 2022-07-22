@@ -48,7 +48,7 @@
                             @csrf
                             <label for="">Укажите дату в данном формате:</label>
                             <input type="text" value="2022-05-01T00:00:00.000Z" name="dateFrom">
-                            <button>ВЫГРУЗИТЬ ДАННЫЕ</button>
+                            <button onclick="javascript:return confirm('СТАРЫЕ ДАННЫЕ БУДУТ ОБНОВЛЕНЫ!!! Вы уверены?');">ВЫГРУЗИТЬ ДАННЫЕ</button>
                         </form>
                     </div>	
                 </div>
@@ -64,7 +64,7 @@
                             @csrf
                             <label for="">Укажите дату в данном формате:</label>
                             <input type="text" value="2022-05-01T00:00:00.000Z" name="dateFrom">
-                            <button>ВЫГРУЗИТЬ ДАННЫЕ</button>
+                            <button onclick="javascript:return confirm('СТАРЫЕ ДАННЫЕ БУДУТ ОБНОВЛЕНЫ!!! Вы уверены?');">ВЫГРУЗИТЬ ДАННЫЕ</button>
                         </form>
                     </div>	
                 </div>
@@ -80,8 +80,8 @@
                             @csrf
                             <label for="">Укажите дату в данном формате:</label>
                             <input type="text" value="2022-05-01T00:00:00.000Z" name="dateFrom">
-                            <input type="text" placeholder="0 или 1" name="flag">
-                            <button>ВЫГРУЗИТЬ ДАННЫЕ</button>
+                            <input type="text" value="1" placeholder="0 или 1" name="flag">
+                            <button onclick="javascript:return confirm('СТАРЫЕ ДАННЫЕ БУДУТ ОБНОВЛЕНЫ!!! Вы уверены?');">ВЫГРУЗИТЬ ДАННЫЕ</button>
                         </form>
                     </div>	
                 </div>
@@ -98,7 +98,7 @@
                             <label for="">Укажите дату в данном формате:</label>
                             <input type="text" value="2022-05-01T00:00:00.000Z" name="dateFrom">
                             <input type="text" placeholder="0 или 1" name="flag">
-                            <button>ВЫГРУЗИТЬ ДАННЫЕ</button>
+                            <button onclick="javascript:return confirm('СТАРЫЕ ДАННЫЕ БУДУТ ОБНОВЛЕНЫ!!! Вы уверены?');">ВЫГРУЗИТЬ ДАННЫЕ</button>
                         </form>
                     </div>	
                 </div>
@@ -117,7 +117,7 @@
                             <input type="text" value="2022-07-14T00:00" name="dateTo">
                             <input type="text" name="limit" placeholder="Максимальное число строк">
                             <input type="text" placeholder="Уникальный идентификатор" name="rrdid">
-                            <button>ВЫГРУЗИТЬ ДАННЫЕ</button>
+                            <button onclick="javascript:return confirm('СТАРЫЕ ДАННЫЕ БУДУТ ОБНОВЛЕНЫ!!! Вы уверены?');">ВЫГРУЗИТЬ ДАННЫЕ</button>
                         </form>
                     </div>	
                 </div>
@@ -133,7 +133,7 @@
                             @csrf
                             <label for="">Укажите дату в данном формате:</label>
                             <input type="text" value="2022-05-01T00:00" name="dateFrom">
-                            <button>ВЫГРУЗИТЬ ДАННЫЕ</button>
+                            <button onclick="javascript:return confirm('СТАРЫЕ ДАННЫЕ БУДУТ ОБНОВЛЕНЫ!!! Вы уверены?');">ВЫГРУЗИТЬ ДАННЫЕ</button>
                         </form>
                     </div>	
                 </div>

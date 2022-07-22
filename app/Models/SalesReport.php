@@ -58,4 +58,5 @@ class SalesReport extends Model
         'penalty',
         'additional_payment'
     ];
+    protected $connection = 'mysql2';
 }

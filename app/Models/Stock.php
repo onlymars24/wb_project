@@ -32,4 +32,5 @@ class Stock extends Model
         'Price',
         'Discount'
     ];
+    protected $connection = 'mysql2';
 }
